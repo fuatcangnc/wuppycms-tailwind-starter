@@ -4,6 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -24,7 +25,12 @@ jobs:
         with:
           node-version: 22
           cache: pnpm
-      - run: pnpm install
+      # Pages sitesi henüz açılmamışsa workflow token'ıyla açar (build.ts de
+      # App/OAuth token'ıyla dener; biri yeterli).
+      - uses: actions/configure-pages@v5
+        with:
+          enablement: true
+      - run: pnpm install --frozen-lockfile
       - run: pnpm build
       - uses: actions/upload-pages-artifact@v3
         with:
